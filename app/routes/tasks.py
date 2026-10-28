@@ -30,4 +30,5 @@ def delete_task(task_id: str):
     for task in tasks_list:
         if task.id == task_id:
             tasks_list.remove(task)
+            return
     raise HTTPException(status_code=404, detail="Task not found")
