@@ -1,15 +1,18 @@
+import select
 from fastapi import APIRouter, HTTPException, status, Depends
+
 from app.schemas.tasks import TaskSchema, TaskCreateSchema, TaskUpdateSchema
 from uuid import uuid4
 from app.db.session import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+from app.db.models.tasks import TasksORM
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
-tasks_list: list[TaskSchema] = []
-
-@router.get("/")
+@router.get("/", response_model=TaskSchema)
 def get_tasks(db: Session = Depends(get_db())) -> list[TaskSchema]:
+    tasks_list = db.scalars(select(TasksORM)).all()
     return tasks_list
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

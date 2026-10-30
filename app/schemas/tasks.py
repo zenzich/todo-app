@@ -1,9 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 class TaskSchema(BaseModel):
     id: str
     title: str
     completed: bool = False
+
+    model_config = ConfigDict(from_attributes=True)
 
 class TaskCreateSchema(BaseModel):
     title: str
