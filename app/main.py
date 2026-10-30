@@ -2,7 +2,14 @@ from fastapi import FastAPI
 from app.routes.tasks import router as tasks_router
 from app.routes.categories import router as categories_router
 from fastapi.middleware.cors import CORSMiddleware
-app = FastAPI()
+from contextlib import asynccontextmanager
+from app.db.base_class import Base
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    Base.metadata.create_all()
+    yield
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     middleware_class=CORSMiddleware,

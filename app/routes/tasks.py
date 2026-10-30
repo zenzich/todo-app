@@ -1,23 +1,25 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from app.schemas.tasks import TaskSchema, TaskCreateSchema, TaskUpdateSchema
 from uuid import uuid4
+from app.db.session import get_db
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
 tasks_list: list[TaskSchema] = []
 
 @router.get("/")
-def get_tasks() -> list[TaskSchema]:
+def get_tasks(db: Session = Depends(get_db())) -> list[TaskSchema]:
     return tasks_list
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-def create_task(payload: TaskCreateSchema) -> TaskSchema:
+def create_task(payload: TaskCreateSchema, db: Session = Depends(get_db())) -> TaskSchema:
     new_task = TaskSchema(id=str(uuid4()), title=payload.title)
     tasks_list.append(new_task)
     return new_task
 
 @router.patch("/{task_id}")
-def update_task(task_id: str, payload: TaskUpdateSchema) -> TaskSchema:
+def update_task(task_id: str, payload: TaskUpdateSchema, db: Session = Depends(get_db())) -> TaskSchema:
     for task in tasks_list:
         if task.id == task_id:
             task.title = payload.title if payload.title else task.title
@@ -26,7 +28,7 @@ def update_task(task_id: str, payload: TaskUpdateSchema) -> TaskSchema:
     raise HTTPException(status_code=404, detail="Task not found")
 
 @router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_task(task_id: str):
+def delete_task(task_id: str, db: Session = Depends(get_db())):
     for task in tasks_list:
         if task.id == task_id:
             tasks_list.remove(task)
