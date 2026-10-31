@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+
+from app.db.session import engine
 from app.routes.tasks import router as tasks_router
 from app.routes.categories import router as categories_router
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +9,7 @@ from app.db.base_class import Base
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Base.metadata.create_all()
+    Base.metadata.create_all(bind=engine)
     yield
 app = FastAPI(lifespan=lifespan)
 
