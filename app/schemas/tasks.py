@@ -10,6 +10,10 @@ class TaskSchema(BaseModel):
 class TaskCreateSchema(BaseModel):
     title: str
 
+    model_config = ConfigDict(from_attributes=True)
+
 class TaskUpdateSchema(BaseModel):
     title: str | None = None
     completed: bool | None = None
+
+    model_config = ConfigDict(from_attributes=True)
