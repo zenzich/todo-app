@@ -1,8 +1,7 @@
 import select
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, status, Depends
 
 from app.schemas.tasks import TaskSchema, TaskCreateSchema, TaskUpdateSchema
-from uuid import uuid4
 from app.db.session import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import select
