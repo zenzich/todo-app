@@ -12,7 +12,7 @@ class TasksRepository:
     def get_all(self) -> list[TasksORM]:
         return self.db.scalars(select(TasksORM)).all()
 
-    def get_by_id(self, task_id: int) -> TasksORM:
+    def get_by_id(self, task_id: str) -> TasksORM:
         return self.db.get(TasksORM, task_id)
 
     def create(self, task: TaskCreateSchema):
