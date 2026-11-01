@@ -10,6 +10,12 @@ frontend url ```http://localhost:3000```
 
 ___
 
-for start backend install requirements(python 3.13.0) and use ```uvicorn main:app --port 8080```
-
+for start backend on windows use(you need docker desktop, python3.13)
+```
+docker run -e POSTGRES_PASSWORD=admin -p 15432:5432 -d postgres
+python -m venv venv
+venv/Scripts/activate
+pip install -r requirements.txt
+uvicorn app.main:app --port 8080
+```
 backend url ```http://localhost:8080```
