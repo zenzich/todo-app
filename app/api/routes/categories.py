@@ -1,33 +1,23 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status, Depends
+
+from app.api.dependencies import get_category_service
 from app.schemas.categories import CategorySchema, CreateCategorySchema, UpdateCategorySchema
-from uuid import uuid4
+from app.services.categories import CategoriesService
 
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
-categories_list: list[CategorySchema] = []
+@router.get("/", response_model=list[CategorySchema])
+def get_categories(categories_service: CategoriesService = Depends(get_category_service)) -> list[CategorySchema]:
+    return categories_service.list_categories()
 
-@router.get("/")
-def get_categories() -> list[CategorySchema]:
-    return categories_list
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=CategorySchema)
+def create_category(payload: CreateCategorySchema, categories_service: CategoriesService = Depends(get_category_service)) -> CategorySchema:
+    return categories_service.create_category(payload)
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
-def create_category(category: CreateCategorySchema) -> CategorySchema:
-    new_category = CategorySchema(id = str(uuid4()), name = category.name)
-    categories_list.append(new_category)
-    return new_category
-
-@router.patch("/{category_id}")
-def update_category(category_id: str, updated_category: UpdateCategorySchema) -> CategorySchema:
-    for category in categories_list:
-        if category.id == category_id:
-            category.name = updated_category.name
-            return category
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+@router.patch("/{category_id}", response_model=UpdateCategorySchema)
+def update_category(category_id: str, payload: UpdateCategorySchema, categories_service: CategoriesService = Depends(get_category_service)) -> CategorySchema:
+    return categories_service.update_category(category_id, payload)
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_category(category_id: str):
-    for category in categories_list:
-        if category.id == category_id:
-            categories_list.remove(category)
-            return
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+def delete_category(category_id: str, categories_service: CategoriesService = Depends(get_category_service)):
+    return categories_service.delete_category(category_id)
