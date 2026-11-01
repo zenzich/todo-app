@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
 from app.db.session import engine
-from app.routes.tasks import router as tasks_router
-from app.routes.categories import router as categories_router
+from app.api.routes.tasks import router as tasks_router
+from app.api.routes.categories import router as categories_router
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.db.base_class import Base
