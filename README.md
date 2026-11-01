@@ -5,7 +5,7 @@ backend for todo app
 # start
 ___
 
-for start backend on windows use(you need docker desktop, python3.13)
+for start backend on windows use(you need docker)
 ```
 docker-compose up --build
 ```
