@@ -20,9 +20,8 @@ class TasksService:
         return new_task
 
     def update_task(self, task_id: str, task: TaskUpdateSchema) -> TasksORM:
-        try:
-            task_for_update = self.tasks_repo.get_by_id(task_id)
-        except Exception:
+        task_for_update = self.tasks_repo.get_by_id(task_id)
+        if not task_for_update:
             raise TaskNotFound(f"Task not found id:{task_id}")
         task_for_update.title = task.title if task.title else task_for_update.title
         task_for_update.completed = task.completed if task.completed is not None else task_for_update.completed
@@ -30,9 +29,8 @@ class TasksService:
         return task_for_update
 
     def delete_task(self, task_id: str):
-        try:
-            task_for_delete = self.tasks_repo.get_by_id(task_id)
-        except Exception:
+        task_for_delete = self.tasks_repo.get_by_id(task_id)
+        if not task_for_delete:
             raise TaskNotFound(f"Task not found id:{task_id}")
         self.tasks_repo.delete(task_for_delete)
         self.db.commit()
