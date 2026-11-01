@@ -15,7 +15,9 @@ class CategoriesService:
         return self.categories_repo.get_all()
 
     def create_category(self, category: CreateCategorySchema) -> CategoriesORM:
-        return self.categories_repo.create(category)
+        new_category = self.categories_repo.create(category)
+        self.db.commit()
+        return new_category
 
     def update_category(self, category_id: str, category: UpdateCategorySchema) -> CategoriesORM:
         try:
@@ -28,6 +30,8 @@ class CategoriesService:
 
     def delete_category(self, category_id: str):
         try:
-            self.categories_repo.delete(self.categories_repo.get_by_id(category_id))
+            category_to_delete = self.categories_repo.get_by_id(category_id)
         except Exception:
             raise CategoryNotFound(f"Category not found id:{category_id}")
+        self.categories_repo.delete(category_to_delete)
+        self.db.commit()

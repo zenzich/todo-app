@@ -15,7 +15,9 @@ class TasksService:
         return self.tasks_repo.get_all()
 
     def create_task(self, task: TaskCreateSchema) -> TasksORM:
-        return self.tasks_repo.create(task)
+        new_task = self.tasks_repo.create(task)
+        self.db.commit()
+        return new_task
 
     def update_task(self, task_id: str, task: TaskUpdateSchema) -> TasksORM:
         try:
@@ -29,6 +31,8 @@ class TasksService:
 
     def delete_task(self, task_id: str):
         try:
-            self.tasks_repo.delete(self.tasks_repo.get_by_id(task_id))
+            task_for_delete = self.tasks_repo.get_by_id(task_id)
         except Exception:
             raise TaskNotFound(f"Task not found id:{task_id}")
+        self.tasks_repo.delete(task_for_delete)
+        self.db.commit()

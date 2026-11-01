@@ -18,9 +18,7 @@ class TasksRepository:
     def create(self, task: TaskCreateSchema) -> TasksORM:
         new_task = TasksORM(title=task.title)
         self.db.add(new_task)
-        self.db.commit()
         return new_task
 
     def delete(self, task_orm):
         self.db.delete(task_orm)
-        self.db.commit()

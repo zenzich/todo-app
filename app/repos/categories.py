@@ -18,9 +18,7 @@ class CategoryRepository:
     def create(self, category: CreateCategorySchema) -> CategoriesORM:
         new_category = CategoriesORM(name=category.name)
         self.db.add(new_category)
-        self.db.commit()
         return new_category
 
     def delete(self, category_orm):
         self.db.delete(category_orm)
-        self.db.commit()
