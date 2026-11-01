@@ -20,18 +20,16 @@ class CategoriesService:
         return new_category
 
     def update_category(self, category_id: str, category: UpdateCategorySchema) -> CategoriesORM:
-        try:
-            category_for_update = self.categories_repo.get_by_id(category_id)
-        except Exception:
+        category_for_update = self.categories_repo.get_by_id(category_id)
+        if not category_for_update:
             raise CategoryNotFound(f"Category not found id:{category_id}")
         category_for_update.name = category.name if category.name else category_for_update.name
         self.db.commit()
         return category_for_update
 
     def delete_category(self, category_id: str):
-        try:
-            category_to_delete = self.categories_repo.get_by_id(category_id)
-        except Exception:
+        category_to_delete = self.categories_repo.get_by_id(category_id)
+        if not category_to_delete:
             raise CategoryNotFound(f"Category not found id:{category_id}")
         self.categories_repo.delete(category_to_delete)
         self.db.commit()
