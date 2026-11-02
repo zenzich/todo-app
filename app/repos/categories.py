@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.db.models.categories import CategoriesORM
@@ -6,19 +6,20 @@ from app.schemas.categories import CreateCategorySchema
 
 
 class CategoryRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_all(self) -> list[CategoriesORM]:
-        return self.db.scalars(select(CategoriesORM)).all()
+    async def get_all(self) -> list[CategoriesORM]:
+        categories = await self.db.scalars(select(CategoriesORM))
+        return categories.all()
 
-    def get_by_id(self, category_id: str) -> CategoriesORM:
-        return self.db.get(CategoriesORM, category_id)
+    async def get_by_id(self, category_id: str) -> CategoriesORM | None:
+        return await self.db.get(CategoriesORM, category_id)
 
-    def create(self, category: CreateCategorySchema) -> CategoriesORM:
+    async def create(self, category: CreateCategorySchema) -> CategoriesORM:
         new_category = CategoriesORM(name=category.name)
         self.db.add(new_category)
         return new_category
 
-    def delete(self, category_orm):
-        self.db.delete(category_orm)
+    async def delete(self, category_orm):
+        await self.db.delete(category_orm)
