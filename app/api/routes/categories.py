@@ -8,23 +8,23 @@ from app.services.categories import CategoriesService
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
 @router.get("/", response_model=list[CategorySchema])
-def get_categories(categories_service: CategoriesService = Depends(get_category_service)) -> list[CategorySchema]:
-    return categories_service.list_categories()
+async def get_categories(categories_service: CategoriesService = Depends(get_category_service)) -> list[CategorySchema]:
+    return await categories_service.list_categories()
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=CategorySchema)
-def create_category(payload: CreateCategorySchema, categories_service: CategoriesService = Depends(get_category_service)) -> CategorySchema:
-    return categories_service.create_category(payload)
+async def create_category(payload: CreateCategorySchema, categories_service: CategoriesService = Depends(get_category_service)) -> CategorySchema:
+    return await categories_service.create_category(payload)
 
 @router.patch("/{category_id}", response_model=UpdateCategorySchema)
-def update_category(category_id: str, payload: UpdateCategorySchema, categories_service: CategoriesService = Depends(get_category_service)) -> CategorySchema:
+async def update_category(category_id: str, payload: UpdateCategorySchema, categories_service: CategoriesService = Depends(get_category_service)) -> CategorySchema:
     try:
-        return categories_service.update_category(category_id, payload)
+        return await categories_service.update_category(category_id, payload)
     except CategoryNotFound:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_category(category_id: str, categories_service: CategoriesService = Depends(get_category_service)):
+async def delete_category(category_id: str, categories_service: CategoriesService = Depends(get_category_service)):
     try:
-        return categories_service.delete_category(category_id)
+        return await categories_service.delete_category(category_id)
     except CategoryNotFound:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
