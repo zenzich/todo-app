@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.db.models.tasks import TasksORM
@@ -6,19 +6,20 @@ from app.schemas.tasks import TaskCreateSchema
 
 
 class TasksRepository:
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_all(self) -> list[TasksORM]:
-        return self.db.scalars(select(TasksORM)).all()
+    async def get_all(self) -> list[TasksORM]:
+        tasks = await self.db.scalars(select(TasksORM))
+        return tasks.all()
 
-    def get_by_id(self, task_id: str) -> TasksORM:
-        return self.db.get(TasksORM, task_id)
+    async def get_by_id(self, task_id: str) -> TasksORM | None:
+        return await self.db.get(TasksORM, task_id)
 
-    def create(self, task: TaskCreateSchema) -> TasksORM:
+    async def create(self, task: TaskCreateSchema) -> TasksORM:
         new_task = TasksORM(title=task.title)
         self.db.add(new_task)
         return new_task
 
-    def delete(self, task_orm):
-        self.db.delete(task_orm)
+    async def delete(self, task_orm):
+        await self.db.delete(task_orm)
