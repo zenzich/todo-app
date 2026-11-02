@@ -10,7 +10,8 @@ from app.core.config import settings
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Base.metadata.create_all(bind=engine.sync_engine)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
 app = FastAPI(lifespan=lifespan)
 
