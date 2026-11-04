@@ -5,10 +5,10 @@ from app.core.exceptions import TaskNotFound
 from app.db.models.tasks import TasksORM
 from app.repos.tasks import TasksRepository
 from app.schemas.tasks import TaskCreateSchema, TaskUpdateSchema, TaskSchema
-
+from app.core.config import settings
 
 class TasksService:
-    def __init__(self, db: AsyncSession, cache_url: str, cache_ttl_seconds: int, cache_tasks_key: str):
+    def __init__(self, db: AsyncSession, cache_url: str = settings.REDIS_URL, cache_ttl_seconds: int = settings.CACHE_TTL_SECONDS, cache_tasks_key: str = settings.CACHE_TASKS_KEY):
         self.db = db
         self.tasks_repo = TasksRepository(db)
         self.cache = RedisCache(cache_url, cache_ttl_seconds)

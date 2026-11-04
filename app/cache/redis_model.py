@@ -10,8 +10,11 @@ class RedisCache:
     async def set(self, key: str, value: dict) -> None:
         await self.redis.set(key, json.dumps(value), ex=self.ttl_seconds)
 
-    async def get(self, key: str) -> dict:
-        return json.loads(await self.redis.get(key))
+    async def get(self, key: str) -> dict | None:
+        value = await self.redis.get(key)
+        if value is not None:
+            return json.loads(value)
+        return None
 
     async def delete(self, key: str) -> None:
         await self.redis.delete(key)
