@@ -1,7 +1,7 @@
 <div align="center">
 
 # todo-app
-___
+
 
 ![python version](https://img.shields.io/badge/python-3.13-green)
 ![fastapi](https://img.shields.io/badge/FastAPI-blue)
