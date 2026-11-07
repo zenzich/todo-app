@@ -38,3 +38,4 @@
 docker-compose up --build
 ```
 After start you can check backend [*here*](http://localhost:8080) (```http://localhost:8080```)
+and FastAPI app documentation [*here*](http://localhost:8080/docs) (```http://localhost:8080/docs```)
